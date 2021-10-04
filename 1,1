@@ -1,0 +1,207 @@
+public class LinkedBinaryTree<T> implements BinaryTreeADT<T>{
+ NodoBin<T> raiz;
+ int cont;
+ int contAdd;
+ int contDel;
+ public Iterator<T> postOrden() {
+        ArrayList<T> lista=new ArrayList<T>();
+        postOrden(raiz,lista);
+        return lista.iterator();
+    }
+    private void postOrden(NodoBin<T> actual,ArrayList<T> lista){
+        if(actual==null)
+            return;
+        postOrden(actual.getIzq(),lista);
+        postOrden(actual.getDer(),lista);
+        lista.add(actual.getDato());//esto fue visitar  
+    }
+ public boolean find(T dato) {
+        boolean res = false;
+        return res;
+    }
+    public Iterator<T> inOrden() {
+        ArrayList<T> lista=new ArrayList<T>();
+        inOrden(raiz,lista);
+        return lista.iterator();
+    }
+    private void inOrden(NodoBin<T> actual, ArrayList<T> lista){
+        if(actual==null)
+            return;
+        inOrden(actual.getIzq(),lista);
+        lista.add(actual.getDato());//esto fue visitar
+        inOrden(actual.getDer(),lista);
+    }
+    public Iterator<T> preOrden() {
+        ArrayList<T> lista = new ArrayList<T>();
+        preOrden(raiz, lista);
+        return lista.iterator();
+    }
+     public void preOrden(NodoBin<T> actual, ArrayList<T> lista){
+        if(actual==null)
+            return;
+        lista.add(actual.getDato());//esto fue visitar
+        preOrden(actual.getIzq(),lista);
+        preOrden(actual.getDer(),lista);
+  }
+
+  LinkedBinaryTree(){
+    raiz=null;
+    cont=0;
+    contDel=0;
+    contAdd=0;
+  }
+
+  LinkedBinaryTree(T elem){
+    raiz=new NodoBin<T>(elem);
+    cont=1;
+  }
+  public int getContAdd() {
+        return contAdd;
+    }
+    public int getContDel() {
+        return contDel;
+    } 
+  public boolean isEmpty(){
+    return cont==0;
+  }
+  public int size(){
+    return cont;
+  }
+/*public void add(T elem) {
+  
+   LinkedBinaryTree<T> temp=new LinkedBinaryTree<T>(elem);
+    Comparable<T> comp=(Comparable<T>) elem;
+    if(isEmpty())
+    raiz.elem=elem;
+    else {
+      NodoBin<T> actual= raiz;
+
+      boolean flag=false;
+      while(!flag) {
+        if(comp.compareTo(actual.elem)<0) {
+          if (actual.getIzq==null) {
+            actual.
+          }
+        }
+      }
+    }
+}
+*/
+
+public void add(T elem){
+        //contAgrega = 0;
+        NodoBin<T> nuevo=new NodoBin<T>(elem);
+        contAdd++;
+        if(this.isEmpty())
+            raiz = nuevo;
+        else{
+            add(nuevo,(NodoBB<T>) raiz);
+        }
+        cont++;
+    }
+    private void add(NodoBB<T> nuevo, NodoBB<T> actual){
+        contAdd++;
+        if(nuevo.getDato().compareTo(actual.getDato())<=0){
+            contAdd++;
+            if(actual.getIzq()==null){
+                actual.cuelgaIzq(nuevo);
+            }else{
+                add(nuevo, (NodoBB<T>) actual.getIzq());
+            }
+        }else{
+            contAdd++;
+            if(actual.getDer()==null){
+                actual.cuelgaDer(nuevo);
+            }else
+                add(nuevo, (NodoBB<T>) actual.getDer());
+        }
+    }
+    private NodoBB<T> busca(T dato, NodoBB<T> actual){
+        contDel++;
+        if(actual != null && !actual.getDato().equals(dato)){
+            contDel++;
+            if(dato.compareTo(actual.getDato())>0){
+                return busca(dato, (NodoBB<T>)actual.getDer());
+            }
+            return busca(dato, (NodoBB<T>)actual.getIzq());
+        }
+        return actual;
+    } 
+    public NodoBB<T> elimina(T dato){
+        if(dato.equals(raiz.getDato())){
+            return eliminaRaiz();
+        }
+        NodoBB<T> res = busca(dato, raiz);
+        contDel++;
+        if(res != null){
+            contDel++;
+            if(res.getDer() == null && res.getIzq() == null){ //no tiene hijos
+                eliminaHoja(res);
+            }else{
+                contDel++;
+                if(res.getDer() != null && res.getIzq() != null){ //tiene dos hijos
+                    eliminaDosHijos(res);
+                }else
+                    eliminaUnHijo(res); //tiene un hijo
+            }
+        }
+        return res;
+    } 
+    private NodoBin<T> eliminaRaiz(){
+        NodoBin<T> aux = raiz; 
+        if(aux.getDer() != null){
+            aux = (NodoBB<T>)aux.getDer();
+            while(aux.getIzq() != null){
+                contDel++;
+                aux = (NodoBB<T>)aux.getIzq(); 
+            }
+            raiz.setdato(aux.getDato());
+            aux.getPapa().setIzq(null);
+        }else{
+            raiz = (NodoBin<T>)raiz.getIzq();
+        }
+        return raiz; 
+    } 
+    private void eliminaUnHijo(NodoBB<T> actual){
+        NodoBB<T> papa = actual.getPapa();
+        contDel++;
+        if(papa.getDer() != null && papa.getDer().equals(actual)){ // es hijo derecho
+            contDel++;
+            if(actual.getDer() != null){ // su único hijo es derecha
+                papa.setDer(actual.getDer());
+                ((NodoBB<T>)actual.getDer()).setPapa(papa);              
+            }else{
+                papa.setDer(actual.getIzq());
+                ((NodoBB<T>)actual.getIzq()).setPapa(papa);  
+            }   
+        }else{ // es hijo izquierdo
+            contDel++;
+            if(actual.getDer() != null){ // su único hijo es derecha
+                papa.setIzq(actual.getDer());
+                ((NodoBB<T>)actual.getDer()).setPapa(papa);              
+            }else{
+                papa.setIzq(actual.getIzq());
+                ((NodoBB<T>)actual.getIzq()).setPapa(papa);  
+            }  
+        }
+     }
+
+    private void eliminaDosHijos(NodoBB<T> actual){
+        NodoBB<T> aux = (NodoBB<T>)actual.getDer();
+        contDel++;
+        while(aux.getIzq() != null){
+            contDel++;
+            aux = (NodoBB<T>)aux.getIzq(); //el más chico de lo s más grandes
+        }
+        actual.setdato(aux.getDato());
+        aux.getPapa().setIzq(null);
+    }
+    private void eliminaHoja(NodoBB<T> actual){
+        if(actual.getPapa().getDer().equals(actual))
+            actual.getPapa().setDer(null);
+        actual.getPapa().setIzq(null);
+        contDel++;
+    }  
+     
+
+}
